@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ポケモン地方クイズ</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    input { margin: 10px; padding: 5px; font-size: 1em; }
+    #result { font-weight: bold; font-size: 1.2em; margin-top: 10px; }
+    #score { margin-top: 5px; }
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .cell {
+      width: 120px;
+      height: 40px;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <h1>ポケモン地方クイズ</h1>
+  <p>ポケモンの地方をひらがなで入力してみよう！</p>
+
+  <input id="answer" type="text" placeholder="ひらがなで入力">
+
+  <p id="result"></p>
+  <p id="score">正解: 0</p>
+
+  <div id="grid"></div>
+
+  <script>
+    // ポケモン地方（ひらがな）
+    const wordList = [
+      "かんとー", "じょうと", "ほうえん", "しんおう",
+      "いっしゅ", "かろす", "あろーら", "がらる", "ぱるであ"
+    ];
+
+    let score = 0;
+    let answered = [];
+
+    // ひらがなチェック
+    function isHiragana(str) {
+      return /^[ぁ-んー]+$/.test(str);
+    }
+
+    // グリッド作成
+    const grid = document.getElementById("grid");
+    wordList.forEach(word => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.id = "cell-" + word;
+      cell.innerText = "";
+      grid.appendChild(cell);
+    });
+
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim();
+
+      if (!isHiragana(input)) {
+        document.getElementById("result").innerText = "ひらがなで入力してください";
+        document.getElementById("answer").value = "";
+        return;
+      }
+
+      if (wordList.includes(input) && !answered.includes(input)) {
+        score++;
+        answered.push(input);
+        document.getElementById("result").innerText = "正解！ " + input;
+        document.getElementById("score").innerText = "正解: " + score;
+        document.getElementById("cell-" + input).innerText = input;
+      } else {
+        document.getElementById("result").innerText = "ちがうか、もう答えたよ";
+      }
+
+      document.getElementById("answer").value = "";
+
+      if (answered.length === wordList.length) {
+        document.getElementById("result").innerText = "🎉 クリア！全問正解です！ 🎉";
+      }
+    }
+
+    document.getElementById("answer").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") checkAnswer();
+    });
+  </script>
+</body>
+</html>
